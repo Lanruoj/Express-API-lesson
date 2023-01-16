@@ -32,3 +32,12 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
+
+// Test route
+app.get("/", (request, response) => {
+  response.json({
+    message: "Hello World!",
+  });
+});
+
+module.exports = { app, HOST, PORT };
