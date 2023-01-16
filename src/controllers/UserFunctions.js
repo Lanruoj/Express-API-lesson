@@ -84,3 +84,57 @@ async function verifyUserJWT(userJWT) {
     throw new Error({ message: "Invalid user token" });
   }
 }
+
+//// MongoDB/Mongoose functionality
+
+// Get all Users from database
+async function getAllUsers() {
+  return await User.find({}).exec();
+}
+
+// Get all Users with specified ID from database
+async function getUserByID(userID) {
+  return await User.findById(userID).exec();
+}
+
+// Create new User
+async function createUser(userDetails) {
+  // Hash the password
+  userDetails.hashedPassword = await hashString(userDetails.password);
+  // Create new User based on userDetails
+  const newUser = new User({
+    email: userDetails.email,
+    password: userDetails.hashedPassword,
+    username: userDetails.username,
+    country: userDetails.country,
+    role: userDetails.roleID,
+  });
+
+  // Save new User in database
+  return await newUser.save();
+}
+
+// Update User
+async function updateUser(userDetails) {
+  // Find User, update it and return updated data
+  return await User.findByIdAndUpdate(
+    userDetails.userID,
+    userDetails.upatedData,
+    { returnDocument: "after" }
+  ).exec();
+}
+
+module.exports = {
+  encryptString,
+  decryptString,
+  decryptObject,
+  hashString,
+  validateHashedData,
+  generateJWT,
+  generateUserJWT,
+  verifyUserJWT,
+  getAllUsers,
+  getUserByID,
+  createUser,
+  updateUser,
+};

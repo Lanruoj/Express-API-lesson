@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { getUsersWithRole, getAllRoles } = require("./RoleFunctions");
 
-// Show all Roles
+// Get all Roles from database
 router.get("/", async (request, response) => {
   const roles = await getAllRoles();
 
@@ -12,7 +12,7 @@ router.get("/", async (request, response) => {
   });
 });
 
-// Show all Users with specified Role
+// Show all Users with specified Role from database
 router.get("/:roleName", async (request, response) => {
   const roleName = request.params.roleName || null;
   const usersWithRole = getUsersWithRole(roleName);
