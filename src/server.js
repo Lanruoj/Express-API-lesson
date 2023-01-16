@@ -5,9 +5,11 @@ dotenv.config();
 const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 5000;
 
-// Create app instance using Express
+// Create Express server and configure basic settings
 const express = require("express");
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Configure basic Helmet settings on our app
 const helmet = require("helmet");
