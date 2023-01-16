@@ -77,6 +77,32 @@ app.get("/databaseHealth", (request, response) => {
   });
 });
 
+// Get the whole database
+app.get("/databaseDump", async (request, response) => {
+  // Initialise an object to store our data
+  const dataContainer = {};
+  // Get the names of the collections in the database
+  let collections = await mongoose.connection.db.listCollections().toArray();
+  collections = collections.map((collection) => collection.name);
+  // For each collection, fetch all of their data and add to our dataContainer object
+  for (const collectionName of collections) {
+    let collectionData = await mongoose.connection.db
+      .collection(collectionName)
+      .find({})
+      .toArray();
+    dataContainer[collectionName] = collectionData;
+  }
+  // Log in console to confirm correct data
+  console.log(
+    "Dumping all of this data to the client: \n" +
+      JSON.stringify(dataContainer, null, 4)
+  );
+  // Return dataContainer
+  response.json({
+    data: dataContainer,
+  });
+});
+
 // Test route
 app.get("/", (request, response) => {
   response.json({
