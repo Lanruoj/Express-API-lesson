@@ -63,7 +63,7 @@ databaseConnector(databaseURL)
   ${error}`);
   });
 
-app.get("databaseHealth", (request, response) => {
+app.get("/databaseHealth", (request, response) => {
   const databaseState = mongoose.connection.readyState;
   const databaseName = mongoose.connection.name;
   const databaseModels = mongoose.connection.modelNames();
