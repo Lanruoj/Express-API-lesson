@@ -44,3 +44,43 @@ async function hashString(stringToHash) {
 async function validateHashedData(providedUnhashedData, storedHashedData) {
   return await bcrypt.compare(providedUnhashedData, storedHashedData);
 }
+
+//// JWT functionality
+
+const jwt = require("jsonwebtoken");
+
+// Generate a JWT from payload
+function generateJWT(payload) {
+  return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
+}
+
+// Generate JWT from encrypted User data with provided User details
+async function generateUserJWT(userDetails) {
+  // Encrypt the User payload
+  let encryptedUserData = encryptString(JSON.stringify(userDetails));
+  // Must pass an object to create JWT otherwise expiresIn won't work
+  return generateJWT({ data: encryptedUserData });
+}
+
+// Verify a User's JWT and refresh
+async function verifyUserJWT(userJWT) {
+  // Verify JWT is valid
+  const verifiedJWT = jwt.verify(userJWT, process.env.JWT_SECRET_KEY, {
+    complete: true,
+  });
+  // Decrypt JWT payload
+  const decryptedJWT = decryptString(verifiedJWT.payload.data);
+  // Parse decrypted data into an object
+  const userData = JSON.parse(decryptedJWT);
+  // Find User from data
+  const targetUser = await User.findById(userData.userID).exec();
+  // Check that JWT data matches stored data
+  if (
+    targetUser.password == userData.password &&
+    targetUser.email == userData.email
+  ) {
+    return generateJWT({ data: verifiedJWT.payload.data });
+  } else {
+    throw new Error({ message: "Invalid user token" });
+  }
+}
