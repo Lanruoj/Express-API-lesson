@@ -40,4 +40,12 @@ app.get("/", (request, response) => {
   });
 });
 
+// If no routes / middleware was triggered, run this
+app.get("*", (request, response) => {
+  response.status(404).json({
+    message: "No route with that path found!",
+    attemptedPath: request.path,
+  });
+});
+
 module.exports = { app, HOST, PORT };
