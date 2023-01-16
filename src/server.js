@@ -33,6 +33,50 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// Configure Mongoose & database environment settings
+const mongoose = require("mongoose");
+let databaseURL = "";
+switch (process.env.NODE_ENV.toLowerCase()) {
+  case "test":
+    databaseURL = "mongodb://localhost:27017/ExpressAPI-test";
+    break;
+  case "development":
+    databaseURL = "mongodb://localhost:27017/ExpressAPI-dev";
+    break;
+  case "production":
+    databaseURL = process.env.DATABASE_URL;
+    break;
+  default:
+    console.error(
+      "Incorrect JavaScript environment specified, database will not be connected"
+    );
+    break;
+}
+// Connect to database
+const { databaseConnector } = require("./database");
+databaseConnector(databaseURL)
+  .then(() => {
+    console.log("Database connected successfully!");
+  })
+  .catch((error) => {
+    console.log(`An error occurred connecting to the database:
+  ${error}`);
+  });
+
+app.get("databaseHealth", (request, response) => {
+  const databaseState = mongoose.connection.readyState;
+  const databaseName = mongoose.connection.name;
+  const databaseModels = mongoose.connection.modelNames();
+  const databaseHost = mongoose.connection.host;
+
+  return response.json({
+    readyState: databaseState,
+    databaseName: databaseName,
+    databaseModels: databaseModels,
+    databaseHost: databaseHost,
+  });
+});
+
 // Test route
 app.get("/", (request, response) => {
   response.json({
