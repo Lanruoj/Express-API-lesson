@@ -29,3 +29,18 @@ function decryptString(data) {
 function decryptObject(data) {
   return JSON.parse(decryptString(data));
 }
+
+//// Hashing & Salting functionality
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
+// Hash a string
+async function hashString(stringToHash) {
+  let saltToAdd = await bcrypt.genSalt(saltRounds);
+  return await bcrypt.hash(stringToHash, saltToAdd);
+}
+
+// Validate hashed data
+async function validateHashedData(providedUnhashedData, storedHashedData) {
+  return await bcrypt.compare(providedUnhashedData, storedHashedData);
+}
