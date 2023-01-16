@@ -33,6 +33,10 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// Import routes from controllers
+const roleRoutes = require("./controllers/RoleRoutes");
+app.use("/roles", roleRoutes);
+
 // Configure Mongoose & database environment settings
 const mongoose = require("mongoose");
 let databaseURL = "";
