@@ -91,6 +91,7 @@ databaseConnector(databaseURL)
   .then(async () => {
     // Parse all collections from database object
     if (process.env.WIPE == "true") {
+      // If WIPE=true, wipe database
       const collections = await mongoose.connection.db
         .listCollections()
         .toArray();
