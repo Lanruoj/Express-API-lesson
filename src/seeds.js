@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { Role } = require("./models/Role");
 const { User } = require("./models/User");
 const { Post } = require("./models/Post");
+const { hashString } = require("./controllers/UserFunctions");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -24,9 +25,40 @@ const roles = [
   },
 ];
 
-const users = [];
+const users = [
+  {
+    username: "seedUser1",
+    email: "seed1@email.com",
+    password: null,
+    country: "Australia",
+    role: null,
+  },
+  {
+    username: "seedUser2",
+    email: "seed2@email.com",
+    password: null,
+    country: "TheBestOne",
+    role: null,
+  },
+];
 
-const posts = [];
+const posts = [
+  {
+    title: "Some seeded post",
+    description: "Very cool. Best post. Huge post. No other posts like it!",
+    author: null,
+  },
+  {
+    title: "Some other seeded post",
+    description: "Very cool. Best post. Huge post. One other post like it!",
+    author: null,
+  },
+  {
+    title: "Another seeded post",
+    description: "Very cool. Best post. Huge post. Two other posts like it!",
+    author: null,
+  },
+];
 
 // Configure database environment settings
 let databaseURL = "";
@@ -74,7 +106,24 @@ databaseConnector(databaseURL)
   })
   .then(async () => {
     // Add seeds to database
-    await Role.insertMany(roles);
+    let rolesCreated = await Role.insertMany(roles);
+    // Iterate through User seeds and hash passwords
+    for (const user of users) {
+      // Set password with a randomly generated hash
+      user.password = await hashString(process.env.USER_SEED_PASSWORD_STRING);
+      // Pick a random role from the roles and set for User
+      user.role =
+        rolesCreated[Math.floor(Math.random() * rolesCreated.length)].id;
+    }
+    // Save Users to database
+    const usersCreated = await User.insertMany(users);
+    // Assign random author to each Post
+    for (const post of posts) {
+      post.author =
+        usersCreated[Math.floor(Math.random() * usersCreated.length)].id;
+    }
+    const postsCreated = await Post.insertMany(posts);
+    // Save Posts to database
     console.log("Database seeded");
   })
   .then(() => {
