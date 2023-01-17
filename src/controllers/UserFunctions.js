@@ -7,7 +7,7 @@ dotenv.config();
 const crypto = require("crypto");
 const encAlgorithm = "aes-256-cbc";
 const encPrivateKey = crypto.scryptSync(process.env.ENC_KEY, "SpecialSalt", 32);
-const encIV = crypto.scryptSync(process.env.ENC_IV, "SpecialSalt, 16");
+const encIV = crypto.scryptSync(process.env.ENC_IV, "SpecialSalt", 16);
 let cipher = crypto.createCipheriv(encAlgorithm, encPrivateKey, encIV);
 let decipher = crypto.createDecipheriv(encAlgorithm, encPrivateKey, encIV);
 
@@ -122,6 +122,11 @@ async function updateUser(userDetails) {
     userDetails.upatedData,
     { returnDocument: "after" }
   ).exec();
+}
+
+// Delete User
+async function deleteUser(userID) {
+  return await User.findByIdAndDelete(userID).exec();
 }
 
 module.exports = {
