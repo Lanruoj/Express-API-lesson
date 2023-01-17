@@ -15,24 +15,27 @@ const {
 
 const { uniqueEmailCheck } = require("../middleware/auth");
 
-router.use(errorHandler);
-
 // Register a new User
 // [POST] /users/register
-router.post("/register", uniqueEmailCheck, async (request, response) => {
-  const userDetails = {
-    email: request.body.email,
-    password: request.body.password,
-    username: request.body.username,
-    country: request.body.country,
-    roleID: request.body.roleID,
-  };
-  const newUser = await createUser(userDetails);
+router.post(
+  "/register",
+  uniqueEmailCheck,
+  errorHandler,
+  async (request, response) => {
+    const userDetails = {
+      email: request.body.email,
+      password: request.body.password,
+      username: request.body.username,
+      country: request.body.country,
+      roleID: request.body.roleID,
+    };
+    const newUser = await createUser(userDetails);
 
-  return response.json({
-    user: newUser,
-  });
-});
+    return response.json({
+      user: newUser,
+    });
+  }
+);
 
 // Login an existing User
 // [POST] /users/login
