@@ -14,7 +14,12 @@ const {
 // Get all Posts
 // [GET] /posts
 router.get("/", async (request, response) => {
-  const allPosts = getAllPosts();
+  const allPosts = await getAllPosts();
 
-  return allPosts;
+  return response.json({
+    count: allPosts.length,
+    data: allPosts,
+  });
 });
+
+module.exports = router;

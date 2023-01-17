@@ -34,10 +34,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Import routes from controllers
-const roleController = require("./controllers/RoleRoutes");
-app.use("/roles", roleController);
-const userController = require("./controllers/UserRoutes");
-app.use("/users", userController);
+app.use("/roles", require("./controllers/RoleRoutes"));
+app.use("/users", require("./controllers/UserRoutes"));
+app.use("/posts", require("./controllers/PostRoutes"));
 
 // Configure Mongoose & database environment settings
 const mongoose = require("mongoose");
