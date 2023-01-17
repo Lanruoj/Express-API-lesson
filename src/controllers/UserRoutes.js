@@ -13,9 +13,13 @@ const {
   updateUser,
 } = require("./UserFunctions");
 
+const { uniqueEmailCheck } = require("../middleware/auth");
+
+router.use(errorHandler);
+
 // Register a new User
 // [POST] /users/register
-router.post("/register", async (request, response) => {
+router.post("/register", uniqueEmailCheck, async (request, response) => {
   const userDetails = {
     email: request.body.email,
     password: request.body.password,
@@ -99,5 +103,16 @@ router.get("/:userID", async (request, response) => {
   const user = await getUserByID(request.params.userID);
   return response.json(user);
 });
+
+// Error handler
+async function errorHandler(error, request, response, next) {
+  if (error) {
+    return response.status(500).json({
+      error: error.message,
+    });
+  } else {
+    next();
+  }
+}
 
 module.exports = router;

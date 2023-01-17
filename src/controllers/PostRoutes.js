@@ -43,7 +43,7 @@ router.get("/:authorID", async (request, response) => {
 router.post("/", async (request, response) => {
   const newPost = await createPost(request.body.postDetails);
 
-  return response.json();
+  return response.json(newPost);
 });
 
 // Update a Post
